@@ -1,0 +1,159 @@
+{
+  "info": {
+    "name": "PayFlow API",
+    "description": "Payment system technical test. Node.js API backed by PostgreSQL, calling a Python (FastAPI) payment-processing service.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Usuarios",
+      "item": [
+        {
+          "name": "Create user",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Grace Hopper\",\n  \"email\": \"grace@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/usuarios",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios"]
+            }
+          }
+        },
+        {
+          "name": "List users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios"]
+            }
+          }
+        },
+        {
+          "name": "Get user by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios", "1"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tarjetas",
+      "item": [
+        {
+          "name": "Register card for user",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titular\": \"Grace Hopper\",\n  \"numero\": \"4111111111111111\",\n  \"brand\": \"Visa\",\n  \"exp_month\": 11,\n  \"exp_year\": 2030\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/1/tarjetas",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios", "1", "tarjetas"]
+            }
+          }
+        },
+        {
+          "name": "List user's cards",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/1/tarjetas",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios", "1", "tarjetas"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Pagos",
+      "item": [
+        {
+          "name": "Create payment (approved/rejected at random)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuario_id\": 1,\n  \"tarjeta_id\": 1,\n  \"monto\": 99.50,\n  \"moneda\": \"USD\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/pagos",
+              "host": ["{{baseUrl}}"],
+              "path": ["pagos"]
+            }
+          }
+        },
+        {
+          "name": "Payment history for a user",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/1/pagos",
+              "host": ["{{baseUrl}}"],
+              "path": ["usuarios", "1", "pagos"]
+            }
+          }
+        },
+        {
+          "name": "Create payment - card not found (404 example)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuario_id\": 1,\n  \"tarjeta_id\": 999,\n  \"monto\": 50\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/pagos",
+              "host": ["{{baseUrl}}"],
+              "path": ["pagos"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
