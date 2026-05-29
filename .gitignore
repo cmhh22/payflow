@@ -24,3 +24,6 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Internal workflow instructions (not part of the deliverable)
+instructions/
