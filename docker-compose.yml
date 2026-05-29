@@ -1,0 +1,44 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-payflow}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-payflow_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-payflow}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ./db/seed.sql:/docker-entrypoint-initdb.d/02_seed.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-payflow} -d ${POSTGRES_DB:-payflow}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  payment-service:
+    build: ./payment-service
+    ports:
+      - "8000:8000"
+
+  api:
+    build: ./api
+    depends_on:
+      db:
+        condition: service_healthy
+      payment-service:
+        condition: service_started
+    ports:
+      - "3000:3000"
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER:-payflow}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-payflow_pass}
+      POSTGRES_DB: ${POSTGRES_DB:-payflow}
+      API_PORT: 3000
+      PAYMENT_SERVICE_URL: http://payment-service:8000
+
+volumes:
+  pgdata:
