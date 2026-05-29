@@ -56,3 +56,25 @@ export function validateTarjeta(body) {
     exp_year: year,
   };
 }
+
+export function validatePago(body) {
+  const { usuario_id, tarjeta_id, monto, moneda } = body ?? {};
+
+  const usuarioId = parseId(usuario_id, 'usuario_id');
+  const tarjetaId = parseId(tarjeta_id, 'tarjeta_id');
+
+  const amount = Number(monto);
+  if (!Number.isFinite(amount) || amount <= 0) {
+    throw new ApiError(400, 'VALIDATION_ERROR', 'Field "monto" must be a number greater than 0');
+  }
+
+  let currency = 'USD';
+  if (moneda !== undefined) {
+    if (typeof moneda !== 'string' || moneda.trim().length !== 3) {
+      throw new ApiError(400, 'VALIDATION_ERROR', 'Field "moneda" must be a 3-letter code');
+    }
+    currency = moneda.trim().toUpperCase();
+  }
+
+  return { usuarioId, tarjetaId, amount, currency };
+}

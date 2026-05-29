@@ -32,6 +32,22 @@ router.get('/:id', asyncHandler(async (req, res) => {
   res.json(result.rows[0]);
 }));
 
+// GET /usuarios/:id/pagos -> payment history for a user
+router.get('/:id/pagos', asyncHandler(async (req, res) => {
+  const id = parseId(req.params.id);
+
+  const userResult = await query('SELECT id FROM usuarios WHERE id = $1', [id]);
+  if (userResult.rows.length === 0) {
+    throw new ApiError(404, 'NOT_FOUND', 'User not found');
+  }
+
+  const result = await query(
+    'SELECT * FROM pagos WHERE usuario_id = $1 ORDER BY created_at DESC, id DESC',
+    [id]
+  );
+  res.json(result.rows);
+}));
+
 // Nested cards routes: /usuarios/:usuarioId/tarjetas
 router.use('/:usuarioId/tarjetas', tarjetasRouter);
 

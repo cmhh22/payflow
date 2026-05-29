@@ -1,5 +1,6 @@
 import express from 'express';
 import usuariosRouter from './routes/usuarios.js';
+import pagosRouter from './routes/pagos.js';
 import { notFound, errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
@@ -13,6 +14,7 @@ app.get('/health', (req, res) => {
 
 // Resource routes
 app.use('/usuarios', usuariosRouter);
+app.use('/pagos', pagosRouter);
 
 // 404 + centralized error handling (must be registered last)
 app.use(notFound);
